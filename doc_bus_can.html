@@ -11,17 +11,77 @@
 <h2>1. Comprendre l’architecture globale</h2>
 
 <h3>1.1 Description générale du banc</h3>
-<p><!-- A complète --></p>
+<p>
+  Le banc Leybold “Training Panel Lighting” reproduit une partie du réseau électronique du domaine
+  habitacle d’une Audi A4 (2007). Il intègre un réseau CAN, un réseau LIN, un système d’éclairage,
+  une commande de tableau de bord (combiné) et une prise de diagnostic OBD pour les opérations
+  de test/diagnostic. :contentReference[oaicite:5]{index=5} 
+</p>
+  <p>
+  Sur la maquette, les calculateurs principaux étudiés sont : J519, J393, J345, J527 et J285. La maquette
+  est alimentée en 12/14 V (douille noire = masse, douille 30 = + permanent). :contentReference[oaicite:6]{index=6}
+</p>
+<ul>
+  <li><strong>J519</strong> : centrale électrique / réseau de bord (pilotage éclairage, interface CAN/LIN).</li>
+  <li><strong>J527</strong> : électronique de colonne (commandes conducteur, comodo… → messages CAN).</li>
+  <li><strong>J285</strong> : combiné d’instruments (voyants/indications selon les états CAN).</li>
+  <li><strong>J393</strong> : calculateur central de confort (fonctions confort, échanges sur CAN Confort).</li>
+  <li><strong>J345</strong> : identification de remorque (selon configuration/usage didactique).</li>
+</ul>
 
 <h3>1.2 Topologie globale du réseau automobile (CAN/LIN)</h3>
-<p><!-- A complète --></p>
+<p>
+  Un véhicule moderne n’utilise pas “un seul CAN” mais plusieurs sous-réseaux (souvent plusieurs CAN
+  spécialisés) et des bus secondaires. Une architecture typique distingue notamment :
+</p>
+<ul>
+  <li><strong>CAN Propulsion</strong> (groupe motopropulseur),</li>
+  <li><strong>CAN Confort</strong> (habitacle : éclairage, verrouillage, commandes…),</li>
+  <li><strong>CAN Diagnostic</strong> (accès diagnostic via la prise de diagnostic),</li>
+  <li><strong>Bus LIN</strong> (bus maître/esclaves pour capteurs/organes simples),</li>
+  <li>et éventuellement <strong>MOST</strong> (infotainment) et autres sous-systèmes selon équipement.</li>
+</ul>
+<p>
+  Cette séparation permet d’adapter le débit/robustesse selon les fonctions et de limiter les interférences
+  entre domaines (confort vs propulsion, etc.). :contentReference[oaicite:7]{index=7}
+</p>
 
 <h3>1.3 Topologie du réseau habitacle (Convenience Electronics)</h3>
-<p><!-- A complète --></p>
+<p>
+  Le domaine habitacle (“Convenience/Comfort”) regroupe les fonctions liées au confort et à l’interface
+  conducteur (éclairage, commande colonne, combiné, confort…). Les calculateurs échangent des états
+  sur le <strong>CAN Confort</strong>, et certains sous-systèmes sont raccordés via <strong>LIN</strong> (capteurs/commandes),
+  typiquement avec un calculateur jouant le rôle de maître LIN. 
+</p>
+<p>
+  Dans ce domaine, une topologie fréquente est une convergence “en étoile” vers un point de jonction
+  (node). Un avantage est qu’une panne d’un module n’empêche pas forcément les autres de continuer à
+  échanger. En cas de court-circuit à la masse/au plus/entre lignes, le CAN Confort peut passer en
+  <em>emergency running mode</em> (mode dégradé, possible fonctionnement en “single-wire” selon transceiver). :contentReference[oaicite:9]{index=9}
+</p>
+<p>
+  Sur votre banc, les défauts réseau typiques sont explicitement simulables (court-circuit CAN High au +,
+  CAN Low à la masse, ou CAN-H et CAN-L court-circuités). :contentReference[oaicite:10]{index=10}
+</p>
 
 <h3>1.4 Architecture spécifique du banc d’essai</h3>
-<p><!-- A complète --></p>
-
+<p>
+  La maquette Leybold utilisée en TP comporte <strong>un seul réseau CAN BUS</strong> configuré à <strong>100 kbit/s</strong>.
+  L’acquisition/analyse des trames se fait via une interface PEAK et le logiciel <strong>PCAN-View</strong>
+  (bitrate 100 kbit/s). Le diagnostic “atelier” est réalisé via la prise OBD et un outil type VCDS. :contentReference[oaicite:11]{index=11}
+</p>
+<p>
+  Chaîne de test recommandée (vue “banc d’essai”) :
+</p>
+<ul>
+  <li>Alimentation 12/14 V → mise sous tension maquette,</li>
+  <li>Connexion OBD → (a) VCDS pour auto-scan / défauts, (b) interface CAN (PEAK) pour observer les trames,</li>
+  <li>Réseau CAN Confort (100 kbit/s) reliant J519, J393, J527, J285, J345,</li>
+  <li>Simulation de défauts via les “fault switches” (dont défauts de ligne CAN). </li>
+</ul>
+<p>
+  (À illustrer par un schéma : PC + PCAN-View ↔ OBD ↔ CAN Confort ↔ ECU, et PC + VCDS ↔ OBD.)
+</p>
 <hr>
 
 <h2>2. Documentation des outils</h2>
