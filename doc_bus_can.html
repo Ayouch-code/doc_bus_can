@@ -28,47 +28,47 @@
 
 <h3>2.1 OBD CAN + USB Adapter</h3>
 <ul>
-  <li><b>Fonction :</b> </li>
-  <li><b>Schéma :</b> </li>
-  <li><b>Type de communication :</b> </li>
-  <li><b>Données manipulées :</b> </li>
-  <li><b>Utilisation dans le banc :</b> </li>
+  <li><b>Fonction :</b> Interface permettant de relier le PC au banc d’essai via la prise OBD afin d’accéder au bus CAN.</li>
+  <li><b>Schéma :</b> PC → USB → Adaptateur OBD → Réseau CAN du banc.</li>
+  <li><b>Type de communication :</b> USB côté PC, CAN côté banc.</li>
+  <li><b>Données manipulées :</b> Trames CAN et requêtes de diagnostic.</li>
+  <li><b>Utilisation dans le banc :</b> Connexion du logiciel de diagnostic pour scanner les calculateurs et lire ou effacer les défauts.</li>
 </ul>
 
 <h3>2.2 Logiciel VCDS</h3>
 <ul>
-  <li><b>Fonction :</b> </li>
-  <li><b>Schéma :</b> </li>
-  <li><b>Type de communication :</b> </li>
-  <li><b>Données manipulées :</b> </li>
-  <li><b>Utilisation dans le banc :</b> </li>
+  <li><b>Fonction :</b> Logiciel de diagnostic permettant d’identifier les calculateurs et de lire les codes défauts.</li>
+  <li><b>Schéma :</b> PC (VCDS) → Adaptateur OBD/USB → Réseau CAN du banc.</li>
+  <li><b>Type de communication :</b> Communication diagnostic via CAN (par interface OBD).</li>
+  <li><b>Données manipulées :</b> Codes défauts (DTC), identification des calculateurs, états de fonctionnement.</li>
+  <li><b>Utilisation dans le banc :</b> Scan du réseau, analyse des défauts et validation des scénarios de panne.</li>
 </ul>
 
 <h3>2.3 Sensor-CASSY 2</h3>
 <ul>
-  <li><b>Fonction :</b> </li>
-  <li><b>Schéma :</b> </li>
-  <li><b>Type de communication :</b> </li>
-  <li><b>Données manipulées :</b> </li>
-  <li><b>Utilisation dans le banc :</b> </li>
+  <li><b>Fonction :</b> Module de mesure permettant d’acquérir des signaux électriques à l’aide de capteurs.</li>
+  <li><b>Schéma :</b> Capteur → Sensor-CASSY 2 → PC.</li>
+  <li><b>Type de communication :</b> Acquisition de données via interface PC (USB).</li>
+  <li><b>Données manipulées :</b> Signaux analogiques ou numériques (tensions, états).</li>
+  <li><b>Utilisation dans le banc :</b> Observation et analyse des signaux lors des tests et des défauts simulés.</li>
 </ul>
 
 <h3>2.4 CAN-Databus-Multi-Adapter</h3>
 <ul>
-  <li><b>Fonction :</b> </li>
-  <li><b>Schéma :</b> </li>
-  <li><b>Type de communication :</b> </li>
-  <li><b>Données manipulées :</b> </li>
-  <li><b>Utilisation dans le banc :</b> </li>
+  <li><b>Fonction :</b> Interface permettant de se connecter directement au bus CAN pour observer les trames.</li>
+  <li><b>Schéma :</b> PC → CAN multi-adapter → CAN-H / CAN-L du banc.</li>
+  <li><b>Type de communication :</b> Communication CAN.</li>
+  <li><b>Données manipulées :</b> Trames CAN (identifiants, données, erreurs).</li>
+  <li><b>Utilisation dans le banc :</b> Analyse des échanges CAN et comparaison entre fonctionnement normal et dégradé.</li>
 </ul>
 
 <h3>2.5 LIN-Bus PC Interface USB</h3>
 <ul>
-  <li><b>Fonction :</b> </li>
-  <li><b>Schéma :</b> </li>
-  <li><b>Type de communication :</b> </li>
-  <li><b>Données manipulées :</b> </li>
-  <li><b>Utilisation dans le banc :</b> </li>
+  <li><b>Fonction :</b> Interface PC permettant de communiquer sur le réseau LIN.</li>
+  <li><b>Schéma :</b> PC → USB → Interface LIN → Réseau LIN du banc.</li>
+  <li><b>Type de communication :</b> USB côté PC, LIN côté banc.</li>
+  <li><b>Données manipulées :</b> Trames LIN (messages maître-esclave).</li>
+  <li><b>Utilisation dans le banc :</b> Observation et analyse de la communication LIN des sous-systèmes habitacle.</li>
 </ul>
 
 <hr>
