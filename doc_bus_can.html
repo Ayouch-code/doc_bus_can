@@ -137,48 +137,161 @@
 
 <h3>3.1 J519</h3>
 <ul>
-  <li><b>Rôle :</b> </li>
-  <li><b>Réseau :</b> </li>
-  <li><b>Interactions :</b> </li>
-  <li><b>Fonctionnement normal / défaut :</b> </li>
+  <li><b>Rôle :</b> Gestion des fonctions de confort et d’éclairage du véhicule.</li>
+  <li><b>Réseau :</b> CAN Confort.</li>
+  <li><b>Interactions :</b> Communication avec les calculateurs de portes, éclairage et tableau de bord.</li>
+  <li><b>Fonctionnement normal / défaut :</b> En cas de défaut, certaines fonctions de confort ou d’éclairage peuvent être indisponibles.</li>
 </ul>
 
 <h3>3.2 J527</h3>
 <ul>
-  <li><b>Rôle :</b> </li>
-  <li><b>Réseau :</b> </li>
-  <li><b>Interactions :</b> </li>
-  <li><b>Fonctionnement normal / défaut :</b> </li>
+  <li><b>Rôle :</b> Gestion des commandes au volant et du contacteur de direction.</li>
+  <li><b>Réseau :</b> CAN Confort.</li>
+  <li><b>Interactions :</b> Échange d’informations avec le calculateur moteur, l’airbag et le tableau de bord.</li>
+  <li><b>Fonctionnement normal / défaut :</b> En cas de panne, les commandes au volant peuvent ne plus fonctionner.</li>
 </ul>
 
 <h3>3.3 J471</h3>
 <ul>
-  <li><b>Rôle :</b> </li>
-  <li><b>Réseau :</b> </li>
-  <li><b>Interactions :</b> </li>
-  <li><b>Fonctionnement normal / défaut :</b> </li>
+  <li><b>Rôle :</b> Distribution et gestion de l’alimentation électrique de certains équipements.</li>
+  <li><b>Réseau :</b> CAN Confort.</li>
+  <li><b>Interactions :</b> Communication avec les modules de confort et d’éclairage.</li>
+  <li><b>Fonctionnement normal / défaut :</b> Un défaut peut entraîner des coupures ou dysfonctionnements électriques.</li>
 </ul>
 
 <h3>3.4 J285</h3>
 <ul>
-  <li><b>Rôle :</b> </li>
-  <li><b>Réseau :</b> </li>
-  <li><b>Interactions :</b> </li>
-  <li><b>Fonctionnement normal / défaut :</b> </li>
+  <li><b>Rôle :</b> Affichage des informations conducteur (vitesse, alertes, voyants).</li>
+  <li><b>Réseau :</b> CAN Confort et CAN Powertrain.</li>
+  <li><b>Interactions :</b> Reçoit des données du moteur, ABS et modules de confort.</li>
+  <li><b>Fonctionnement normal / défaut :</b> En cas de défaut, les informations affichées peuvent être erronées ou absentes.</li>
 </ul>
 
 <h3>3.5 J393</h3>
 <ul>
-  <li><b>Rôle :</b> </li>
-  <li><b>Réseau :</b> </li>
-  <li><b>Interactions :</b> </li>
-  <li><b>Fonctionnement normal / défaut :</b> </li>
+  <li><b>Rôle :</b> Gestion centralisée des fonctions de confort du véhicule (verrouillage, alarme, accès).</li>
+  <li><b>Réseau :</b> CAN Confort.</li>
+  <li><b>Interactions :</b> Communication avec les calculateurs de portes, le module d’éclairage et le combiné d’instruments.</li>
+  <li><b>Fonctionnement normal / défaut :</b> En cas de défaut, le verrouillage centralisé ou l’alarme peuvent ne plus fonctionner correctement.</li>
 </ul>
 
 <hr>
 
 <h2>4. Diagnostic, expérimentations et procédure</h2>
-<p><!-- C complète --></p>
+<p>
+Le diagnostic automatique du banc est réalisé à l’aide du logiciel VCDS connecté via l’interface OBD CAN + USB.
+Un scan complet du réseau est effectué afin d’identifier tous les calculateurs présents sur le bus CAN.
+</p>
 
+<ul>
+<li><b>Étape 1 : Scan réseau</b> – Identification des ECU actifs (J519, J527, J285, J393, etc.).</li>
+<li><b>Étape 2 : Lecture des défauts (DTC)</b> – Lecture des codes défauts enregistrés dans chaque calculateur.</li>
+<li><b>Étape 3 : Analyse technique</b> – Interprétation des défauts détectés.</li>
+</ul>
+
+<p>
+Des défauts ont été simulés à l’aide des interrupteurs du banc :
+</p>
+
+<ul>
+<li><b>Rupture bus CAN :</b> déconnexion de CAN-H ou CAN-L provoquant une perte de communication générale.</li>
+<li><b>ECU absent :</b> déconnexion d’un calculateur provoquant une erreur “No Communication”.</li>
+<li><b>Défaut alimentation :</b> coupure d’alimentation d’un module entraînant son arrêt complet.</li>
+<li><b>Conflit d’arbitrage :</b> émission simultanée de deux trames avec priorité différente.</li>
+</ul>
+
+<p>
+Le réseau CAN détecte automatiquement les erreurs grâce au contrôle CRC, au bit de contrôle d’erreur et au mécanisme d’arbitrage dominant/récessif.
+En cas d’erreur, une trame d’erreur est générée et le calculateur fautif peut passer en mode dégradé.
+</p>
+
+<hr>
+
+<h3>4.2 Étude fonctionnelle du système d’éclairage</h3>
+
+<p>
+L’analyse des trames CAN a été réalisée à l’aide du CAN-Databus-Multi-Adapter.
+Les identifiants et données ont été observés en fonctionnement normal puis en situation de défaut.
+</p>
+
+<h4>Feux arrière / Stop</h4>
+<ul>
+<li>Activation via commande conducteur.</li>
+<li>Transmission d’une trame CAN contenant un bit d’activation.</li>
+<li>En cas d’ampoule défectueuse : message défaut généré par le calculateur J519.</li>
+<li>Correction automatique : signalisation défaut au tableau de bord (J285).</li>
+</ul>
+
+<h4>Clignotants</h4>
+<ul>
+<li>Envoi périodique d’une trame CAN pour générer le clignotement.</li>
+<li>Fréquence contrôlée par le calculateur central.</li>
+<li>Détection d’ampoule grillée via surveillance de courant.</li>
+</ul>
+
+<h4>Plein phare</h4>
+<ul>
+<li>Activation via commodo (J527).</li>
+<li>Transmission de la commande au module d’éclairage.</li>
+<li>Priorité élevée sur le bus CAN.</li>
+</ul>
+
+<h4>Antibrouillard</h4>
+<ul>
+<li>Commande envoyée par interrupteur.</li>
+<li>Validation par le calculateur central avant activation.</li>
+</ul>
+
+<h4>Plaque immatriculation</h4>
+<ul>
+<li>Allumage automatique avec feux de position.</li>
+<li>Surveillance continue du circuit.</li>
+</ul>
+
+<p>
+En mode défaut, le système peut :
+- générer un code DTC,
+- désactiver partiellement la fonction,
+- informer le conducteur via le tableau de bord.
+</p>
+
+<hr>
+
+<h3>4.3 Procédure d’exploitation du banc</h3>
+
+<h4>1. Mise sous tension</h4>
+<p>
+Alimentation principale activée. Les calculateurs reçoivent la tension batterie (12V).
+Les modules entrent en phase d’initialisation.
+</p>
+
+<h4>2. Initialisation du réseau</h4>
+<p>
+Les calculateurs commencent à émettre des trames d’identification.
+Le réseau CAN devient actif et synchronisé.
+</p>
+
+<h4>3. Connexion diagnostic</h4>
+<p>
+Connexion du PC via l’interface OBD.
+Lancement du logiciel VCDS.
+Scan automatique du réseau.
+</p>
+
+<h4>4. Test automatique</h4>
+<p>
+Lecture des défauts.
+Activation manuelle des fonctions (éclairage, essuie-glace).
+Observation des trames CAN.
+Simulation de défauts.
+</p>
+
+<h4>5. Arrêt du banc</h4>
+<p>
+Arrêt des fonctions actives.
+Coupure de l’alimentation principale.
+Extinction progressive des calculateurs.
+Fin de communication sur le bus CAN.
+</p>
 </body>
 </html>
