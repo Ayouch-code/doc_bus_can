@@ -1,0 +1,202 @@
+ Personne 1 — Architecture & Théorie CAN
+Rôle : Responsable Architecture Réseau
+Architecture globale
+
+Description générale du banc Leybold
+
+Topologie réseau CAN / LIN
+
+Répartition des calculateurs
+
+Organisation hiérarchique ou centralisée
+
+Architecture spécifique du banc
+
+Rappels théoriques CAN
+
+CAN-H / CAN-L
+
+Signal différentiel
+
+Bit dominant / récessif
+
+Arbitrage
+
+Trame standard (CAN 2.0A)
+
+Trame étendue (CAN 2.0B)
+
+Détection d’erreurs
+
+Schémas explicatifs obligatoires
+
+ Schémas globaux
+
+Schéma topologie réseau
+
+Schéma hiérarchie calculateurs
+
+Schéma structure trame CAN
+
+=> Cette personne construit la base technique du document.
+
+ Personne 2 — Outils & Calculateurs
+ Rôle : Responsable Documentation Technique
+Documentation des outils
+
+Pour chacun :
+
+OBD CAN + USB Adapter
+
+Logiciel VCDS
+
+Sensor-CASSY 2
+
+CAN-Databus-Multi-Adapter
+
+LIN-Bus PC Interface USB
+
+Décrire :
+
+Fonction
+
+Type communication
+
+Données manipulées
+
+Utilisation dans le banc
+
+Schéma interaction
+
+Documentation des calculateurs (ECU)
+
+J519
+
+J527
+
+J471
+
+J285
+
+J393
+
+Pour chacun :
+
+Fonction
+
+Rôle dans le réseau
+
+Messages CAN échangés
+
+Interaction avec autres ECU
+
+Mode normal / défaut
+
+=> Cette personne s’occupe de la partie “composants du système”.
+ Personne 3 — Interfaces, Diagnostic & Expérimentation
+Rôle : Responsable Validation & Analyse
+ Interfaces CAN
+
+Pour chaque système :
+
+Lighting System I & II
+
+Moteur essuie-glace
+
+Interrupteur marche arrière
+
+Contact / Neiman
+
+Feux de détresse
+
+Pour chacun :
+
+Fonctionnement normal
+
+Messages CAN
+
+Mode défaut
+
+Correction
+
+Schéma interaction capteur → ECU → actionneur
+
+ Diagnostic automatique
+
+Réaliser et documenter :
+
+Scan réseau
+
+Lecture défauts
+
+Simulation défauts :
+
+Rupture bus
+
+ECU absent
+
+Trame corrompue
+
+Défaut alimentation
+
+Conflit arbitrage
+
+Analyse comportement réseau
+
+Causes probables
+
+ Étude fonctionnelle éclairage
+
+Analyser trames CAN :
+
+Feux arrière / stop
+
+Clignotants
+
+Plein phare
+
+Antibrouillard
+
+Plaque immatriculation
+
+Pour chacun :
+
+Trame normale
+
+Trame en défaut
+
+Correction automatique
+
+ Procédure d’exploitation du banc
+
+Mise sous tension
+
+Initialisation
+
+Connexion diagnostic
+
+Test automatique
+
+Arrêt
+
+=> Cette personne s’occupe de la partie la plus expérimentale.
+
+Organisation Git recommandée
+
+Chaque personne travaille sur :
+
+Branche feature_personne1
+
+Branche feature_personne2
+
+Branche feature_personne3
+
+Puis :
+
+Merge vers develop
+
+Tests
+
+Validation
+
+Merge vers master
