@@ -5,321 +5,312 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>doc_bus_can</title>
 </head>
-
 <body bgcolor="#e9eef6">
 
-<!-- Cadre centré (marges) -->
-<table width="920" align="center" cellpadding="0" cellspacing="0" border="0">
-  <tr>
-    <td>
+  <table width="920" align="center" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td bgcolor="#ffffff">
 
-      <!-- Bandeau titre -->
-      <table width="100%" cellpadding="18" cellspacing="0" border="0" bgcolor="#1e3a8a">
-        <tr>
-          <td>
-            <font color="#ffffff" face="Arial">
-              <h1>Documentation technique – Banc d’essai BUS CAN / LIN</h1>
-              <p>
-                <b>Objectif :</b> documenter le banc (réseau habitacle Audi A4 2007) : architecture, outils,
-                calculateurs, diagnostic, expérimentations et procédure.
-              </p>
-            </font>
-          </td>
-        </tr>
-      </table>
+        <!-- Bandeau titre -->
+        <table width="100%" cellpadding="18" cellspacing="0" border="0" bgcolor="#1e3a8a">
+          <tr>
+            <td>
+              <font face="Arial" color="#ffffff">
+                <h1>Documentation technique – Banc d’essai BUS CAN / LIN</h1>
+                <p>
+                  <b>Objectif :</b> présenter l’architecture du banc (réseau habitacle Audi), les outils utilisés et une synthèse des observations réalisées (VCDS + PCAN-View).
+                </p>
+              </font>
+            </td>
+          </tr>
+        </table>
 
-      <!-- Corps du document -->
-      <table width="100%" cellpadding="22" cellspacing="0" border="0" bgcolor="#ffffff">
-        <tr>
-          <td>
+        <!-- Corps -->
+        <table width="100%" cellpadding="22" cellspacing="0" border="0">
+          <tr>
+            <td>
 
-            <!-- Sommaire -->
-            <table width="100%" cellpadding="12" cellspacing="0" border="1" bordercolor="#c7d2fe" bgcolor="#f5f7ff">
-              <tr>
-                <td>
-                  <font face="Arial">
-                    <h2><font color="#1e3a8a">Sommaire</font></h2>
-                    <ol>
-                      <li><a href="#sec1">Comprendre l’architecture globale</a></li>
-                      <li><a href="#sec2">Documentation des outils</a></li>
-                      <li><a href="#sec3">Calculateurs</a></li>
-                      <li><a href="#sec4">Diagnostic, expérimentations et procédure</a></li>
-                      <li><a href="#sources">Sources</a></li>
-                    </ol>
-                  </font>
-                </td>
-              </tr>
-            </table>
-
-            <br>
-            <hr color="#1e3a8a">
-            <br>
-
-            <!-- ===================================================== -->
-            <!-- 1. Architecture globale                               -->
-            <!-- ===================================================== -->
-            <a id="sec1"></a>
-            <font face="Arial">
-              <h2><font color="#1e3a8a">1. Comprendre l’architecture globale</font></h2>
-
-              <h3><font color="#0f172a">1.1 Description générale du banc</font></h3>
-              <p>
-                Le banc Leybold “Training Panel Lighting” reproduit une partie du réseau électronique du domaine
-                habitacle d’une Audi A4 (2007). Il intègre un réseau CAN, un réseau LIN, un système d’éclairage,
-                une commande de tableau de bord (combiné) et une prise de diagnostic OBD pour les opérations
-                de test/diagnostic. <sup>[S1]</sup>
-              </p>
-
-              <p>
-                Sur la maquette, les calculateurs principaux étudiés sont : J519, J393, J345, J527 et J285. La maquette
-                est alimentée en 12/14 V (douille noire = masse, douille 30 = + permanent). <sup>[S2]</sup>
-              </p>
-
-              <!-- Encadré (sans CSS) -->
-              <table width="100%" cellpadding="12" cellspacing="0" border="1" bordercolor="#93c5fd" bgcolor="#eff6ff">
+              <!-- Sommaire -->
+              <table width="100%" cellpadding="12" cellspacing="0" border="1" bgcolor="#f5f7ff">
                 <tr>
                   <td>
-                    <h4><font color="#1e3a8a">ECU principaux (vue d’ensemble)</font></h4>
-                    <ul>
-                      <li><b>J519</b> : centrale électrique / réseau de bord (pilotage éclairage, interface CAN/LIN).</li>
-                      <li><b>J527</b> : électronique de colonne (commandes conducteur, comodo… → messages CAN).</li>
-                      <li><b>J285</b> : combiné d’instruments (voyants/indications selon les états CAN).</li>
-                      <li><b>J393</b> : calculateur central de confort (fonctions confort, échanges sur CAN Confort).</li>
-                      <li><b>J345</b> : identification de remorque (selon configuration/usage didactique).</li>
-                    </ul>
+                    <font face="Arial">
+                      <h2><font color="#1e3a8a">Sommaire</font></h2>
+                      <ol>
+                        <li><a href="#sec1">Architecture globale (CAN/LIN)</a></li>
+                        <li><a href="#sec2">Outils et interfaces</a></li>
+                        <li><a href="#sec3">Calculateurs (ECU)</a></li>
+                        <li><a href="#sec4">Observations et procédure</a></li>
+                        <li><a href="#sources">Sources</a></li>
+                      </ol>
+                    </font>
                   </td>
                 </tr>
               </table>
 
-              <h3><font color="#0f172a">1.2 Topologie globale du réseau automobile (CAN/LIN)</font></h3>
-              <p>
-                Un véhicule moderne n’utilise pas “un seul CAN” mais plusieurs sous-réseaux (souvent plusieurs CAN
-                spécialisés) et des bus secondaires. Une architecture typique distingue notamment :
-              </p>
-              <ul>
-                <li><b>CAN Propulsion</b> (groupe motopropulseur),</li>
-                <li><b>CAN Confort</b> (habitacle : éclairage, verrouillage, commandes…),</li>
-                <li><b>CAN Diagnostic</b> (accès diagnostic via la prise de diagnostic),</li>
-                <li><b>Bus LIN</b> (bus maître/esclaves pour capteurs/organes simples),</li>
-                <li>et éventuellement <b>MOST</b> (infotainment) et autres sous-systèmes selon équipement.</li>
-              </ul>
-              <p>
-                Cette séparation permet d’adapter le débit/robustesse selon les fonctions et de limiter les interférences
-                entre domaines (confort vs propulsion, etc.). <sup>[S1]</sup>
-              </p>
+              <br>
+              <hr color="#1e3a8a">
+              <br>
 
-              <h3><font color="#0f172a">1.3 Topologie du réseau habitacle (Convenience Electronics)</font></h3>
-              <p>
-                Le domaine habitacle (“Convenience/Comfort”) regroupe les fonctions liées au confort et à l’interface
-                conducteur (éclairage, commande colonne, combiné, confort…). Les calculateurs échangent des états
-                sur le <b>CAN Confort</b>, et certains sous-systèmes sont raccordés via <b>LIN</b> (capteurs/commandes),
-                typiquement avec un calculateur jouant le rôle de maître LIN.
-              </p>
-              <p>
-                Dans ce domaine, une topologie fréquente est une convergence “en étoile” vers un point de jonction
-                (node). En cas de court-circuit à la masse/au plus/entre lignes, le CAN Confort peut passer en
-                <i>emergency running mode</i> (mode dégradé, possible fonctionnement en “single-wire” selon transceiver).
-                <sup>[S1]</sup>
-              </p>
-              <p>
-                Sur votre banc, les défauts réseau typiques sont simulables (court-circuit CAN High au +, CAN Low à la masse,
-                ou CAN-H et CAN-L court-circuités). <sup>[S2]</sup>
-              </p>
+              <a id="sec1"></a>
+              <font face="Arial">
+                <h2><font color="#1e3a8a">1. Architecture globale (CAN/LIN)</font></h2>
 
-              <h3><font color="#0f172a">1.4 Architecture spécifique du banc d’essai</font></h3>
-              <p>
-                La maquette Leybold utilisée en TP comporte <b>un seul réseau CAN BUS</b> configuré à <b>100 kbit/s</b>.
-                L’acquisition/analyse des trames se fait via une interface PEAK et le logiciel <b>PCAN-View</b>
-                (bitrate 100 kbit/s). Le diagnostic “atelier” est réalisé via la prise OBD et un outil type VCDS.
-                <sup>[S2]</sup>
-              </p>
+                <h3><font color="#0f172a">1.1 Description générale du banc</font></h3>
+                <p>
+                  Le banc Leybold « Training Panel Lighting » reproduit une partie du réseau électronique du domaine habitacle (confort) d’un véhicule Audi.
+                  Il intègre un réseau CAN, des liaisons LIN, un système d’éclairage et une prise de diagnostic OBD pour les opérations de test et d’observation.
+                  <sup>[S1]</sup>
+                </p>
 
-              <h4><font color="#1e3a8a">Chaîne de test recommandée</font></h4>
-              <ol>
-                <li>Alimentation 12/14 V → mise sous tension maquette</li>
-                <li>Connexion OBD → (a) VCDS pour auto-scan / défauts, (b) interface CAN (PEAK) pour observer les trames</li>
-                <li>Réseau CAN Confort (100 kbit/s) reliant J519, J393, J527, J285, J345</li>
-                <li>Simulation de défauts via les “fault switches” (dont défauts de ligne CAN)</li>
-              </ol>
+                <p>
+                  Les principaux calculateurs étudiés sur la maquette sont : J519 (réseau de bord), J393 (confort), J527 (colonne de direction),
+                  J285 (combiné d’instruments) et J345 (remorque, selon configuration). L’alimentation du banc est réalisée en 12/14 V
+                  (masse et + permanent). <sup>[S2]</sup>
+                </p>
 
-              <br><hr color="#c7d2fe"><br>
-            </font>
-
-            <!-- ===================================================== -->
-            <!-- 2. Outils                                              -->
-            <!-- ===================================================== -->
-            <a id="sec2"></a>
-            <font face="Arial">
-              <h2><font color="#1e3a8a">2. Documentation des outils</font></h2>
-
-              <table border="1" cellpadding="8" cellspacing="0" width="100%" bordercolor="#cbd5e1">
-                <thead bgcolor="#f1f5f9">
+                <!-- Encadré synthèse -->
+                <table width="100%" cellpadding="12" cellspacing="0" border="1" bgcolor="#eff6ff">
                   <tr>
+                    <td>
+                      <h4><font color="#1e3a8a">ECU principaux (vue d’ensemble)</font></h4>
+                      <ul>
+                        <li><b>J519</b> : calculateur réseau de bord (fonctions d’éclairage / passerelles locales, et sous-systèmes LIN).</li>
+                        <li><b>J393</b> : calculateur central de confort (fonctions habitacle et échanges sur CAN Confort).</li>
+                        <li><b>J527</b> : électronique de colonne (commandes conducteur).</li>
+                        <li><b>J285</b> : combiné d’instruments (affichage des états du véhicule).</li>
+                        <li><b>J345</b> : identification remorque (présence selon configuration).</li>
+                      </ul>
+                    </td>
+                  </tr>
+                </table>
+
+                <h3><font color="#0f172a">1.2 Réseaux CAN et LIN : principes</font></h3>
+                <p>
+                  Un véhicule moderne n’utilise pas un seul bus : on distingue généralement plusieurs sous-réseaux CAN spécialisés (propulsion, confort, diagnostic),
+                  et des bus locaux comme le LIN. Le <b>CAN</b> supporte les échanges principaux entre calculateurs (multi-maître), tandis que le <b>LIN</b> est un bus local
+                  maître/esclaves, adapté à des capteurs/actionneurs simples pilotés par un calculateur maître. <sup>[S1]</sup>
+                </p>
+
+                <h3><font color="#0f172a">1.3 Domaine habitacle (Convenience Electronics)</font></h3>
+                <p>
+                  Le domaine habitacle regroupe les fonctions confort (éclairage, commandes conducteur, combiné, etc.). Les calculateurs échangent leurs informations
+                  sur le <b>CAN Confort</b>, et certains sous-systèmes sont raccordés en <b>LIN</b> (capteurs, commandes, actionneurs locaux). <sup>[S1]</sup>
+                </p>
+
+                <h3><font color="#0f172a">1.4 Architecture spécifique du banc (vue fonctionnelle)</font></h3>
+                <p>
+                  Sur le banc, l’accès se fait par la prise OBD (outil VCDS) et par une interface PEAK (PCAN-View) pour l’observation des trames CAN.
+                  Les figures suivantes illustrent la vue simplifiée CAN/LIN du banc et le contexte des principaux ECU.
+                </p>
+
+                <table width="100%" cellpadding="8" cellspacing="0" border="0">
+                  <tr>
+                    <td align="center">
+                      <img src="figures/diagramme.jpeg" width="880" border="1" alt="Architecture simplifiée CAN/LIN du banc d’essai">
+                      <br>
+                      <i>Figure 1 — Architecture simplifiée CAN/LIN du banc d’essai (vue fonctionnelle).</i>
+                    </td>
+                  </tr>
+                </table>
+
+                <br><hr color="#c7d2fe"><br>
+              </font>
+
+              <a id="sec2"></a>
+              <font face="Arial">
+                <h2><font color="#1e3a8a">2. Outils et interfaces</font></h2>
+
+                <table width="100%" cellpadding="8" cellspacing="0" border="1">
+                  <tr bgcolor="#dbeafe">
                     <th>Outil</th>
                     <th>Fonction</th>
                     <th>Communication</th>
                     <th>Données</th>
                     <th>Utilisation sur le banc</th>
                   </tr>
-                </thead>
-                <tbody>
                   <tr>
                     <td><b>OBD CAN + USB Adapter</b></td>
-                    <td>Relier le PC au banc via la prise OBD pour accéder au bus CAN.</td>
-                    <td>USB (PC) ↔ CAN (banc)</td>
-                    <td>Trames CAN, requêtes diagnostic</td>
-                    <td>Connexion VCDS, scan des calculateurs, lecture/effacement défauts.</td>
+                    <td>Relier le PC au banc via la prise OBD.</td>
+                    <td>USB (PC) ↔ OBD/CAN (banc)</td>
+                    <td>Requêtes/réponses de diagnostic, informations ECU</td>
+                    <td>Connexion de VCDS pour identifier les calculateurs et accéder aux informations de diagnostic.</td>
                   </tr>
                   <tr>
-                    <td><b>Logiciel VCDS</b></td>
-                    <td>Diagnostic : identification ECU, lecture codes défauts, états.</td>
-                    <td>Diagnostic via CAN (OBD)</td>
-                    <td>DTC, identifiants ECU, états</td>
-                    <td>Auto-scan réseau, analyse défauts, validation scénarios de panne.</td>
+                    <td><b>Logiciel VCDS (Ross-Tech)</b></td>
+                    <td>Outil de diagnostic (identification, informations ECU).</td>
+                    <td>Diagnostic via OBD</td>
+                    <td>Identification ECU, informations de configuration</td>
+                    <td>Lecture des informations disponibles sur les calculateurs présents.</td>
+                  </tr>
+                  <tr>
+                    <td><b>Interface PEAK + PCAN-View</b></td>
+                    <td>Observation du bus CAN.</td>
+                    <td>USB (PC) ↔ CAN (banc)</td>
+                    <td>Trames CAN : CAN-ID, DLC, Data, temps de cycle, compteur</td>
+                    <td>Capture et comparaison des trames lors des activations de fonctions (éclairage, commandes).</td>
                   </tr>
                   <tr>
                     <td><b>Sensor-CASSY 2</b></td>
-                    <td>Acquisition de signaux électriques via capteurs.</td>
+                    <td>Acquisition de signaux électriques.</td>
                     <td>USB (PC)</td>
                     <td>Signaux analogiques/numériques</td>
-                    <td>Observation/analyse des signaux lors des tests.</td>
-                  </tr>
-                  <tr>
-                    <td><b>CAN-Databus-Multi-Adapter</b></td>
-                    <td>Connexion au bus CAN pour observer/analyser les trames.</td>
-                    <td>CAN</td>
-                    <td>IDs, données, erreurs</td>
-                    <td>Comparer fonctionnement normal vs dégradé.</td>
+                    <td>Observation de grandeurs électriques en complément (selon les essais réalisés).</td>
                   </tr>
                   <tr>
                     <td><b>LIN-Bus PC Interface USB</b></td>
                     <td>Communication sur le réseau LIN.</td>
                     <td>USB (PC) ↔ LIN (banc)</td>
                     <td>Messages LIN</td>
-                    <td>Observation/analyse de la communication LIN.</td>
+                    <td>Analyse de sous-systèmes LIN lorsque nécessaire (capteurs/actionneurs locaux).</td>
                   </tr>
-                </tbody>
-              </table>
+                </table>
 
-              <br><hr color="#c7d2fe"><br>
-            </font>
+                <br><hr color="#c7d2fe"><br>
+              </font>
 
-            <!-- ===================================================== -->
-            <!-- 3. Calculateurs                                         -->
-            <!-- ===================================================== -->
-            <a id="sec3"></a>
-            <font face="Arial">
-              <h2><font color="#1e3a8a">3. Calculateurs</font></h2>
+              <a id="sec3"></a>
+              <font face="Arial">
+                <h2><font color="#1e3a8a">3. Calculateurs (ECU)</font></h2>
 
-              <h3>3.1 J519</h3>
-              <ul>
-                <li><b>Rôle :</b> Gestion des fonctions de confort et d’éclairage.</li>
-                <li><b>Réseau :</b> CAN Confort.</li>
-                <li><b>Interactions :</b> Communication avec les calculateurs de confort, éclairage et combiné.</li>
-                <li><b>Normal / défaut :</b> Certaines fonctions peuvent devenir indisponibles en cas de défaut.</li>
-              </ul>
+                <h3>3.1 J519 – Calculateur réseau de bord</h3>
+                <ul>
+                  <li><b>Rôle :</b> Gestion de fonctions de réseau de bord (notamment éclairage) et interaction avec des sous-systèmes locaux.</li>
+                  <li><b>Réseau :</b> CAN Confort (et liaisons LIN associées selon fonctions).</li>
+                  <li><b>Interactions :</b> Échanges avec les ECU confort et certaines commandes/capteurs raccordés en LIN.</li>
+                </ul>
 
-              <h3>3.2 J527</h3>
-              <ul>
-                <li><b>Rôle :</b> Gestion des commandes au volant et du contacteur de direction.</li>
-                <li><b>Réseau :</b> CAN Confort.</li>
-                <li><b>Interactions :</b> Échange d’informations avec le combiné et les modules confort.</li>
-                <li><b>Normal / défaut :</b> Commandes au volant peuvent ne plus fonctionner.</li>
-              </ul>
+                <table width="100%" cellpadding="8" cellspacing="0" border="0">
+                  <tr>
+                    <td align="center">
+                      <img src="figures/j519_reseau_de_bord.JPG" width="520" border="1" alt="J519 calculateur réseau de bord et abonnés LIN">
+                      <br>
+                      <i>Figure 2 — PCAN-View : réception des trames CAN sur le banc (exemple de connexion).</i>
+                    </td>
+                  </tr>
+                </table>
 
-              <h3>3.3 J471</h3>
-              <ul>
-                <li><b>Rôle :</b> Distribution/gestion de l’alimentation de certains équipements.</li>
-                <li><b>Réseau :</b> CAN Confort.</li>
-                <li><b>Interactions :</b> Modules de confort et d’éclairage.</li>
-                <li><b>Normal / défaut :</b> Dysfonctionnements électriques possibles.</li>
-              </ul>
+                <h3>3.2 J393 – Calculateur central de confort</h3>
+                <ul>
+                  <li><b>Rôle :</b> Gestion centralisée des fonctions habitacle (confort).</li>
+                  <li><b>Réseau :</b> CAN Confort.</li>
+                  <li><b>Interactions :</b> Dialogue avec J519, J527, J285 et d’autres modules confort selon configuration.</li>
+                </ul>
 
-              <h3>3.4 J285</h3>
-              <ul>
-                <li><b>Rôle :</b> Affichage des informations conducteur (voyants, alertes).</li>
-                <li><b>Réseau :</b> CAN Confort (selon config).</li>
-                <li><b>Interactions :</b> Reçoit des données des ECU (confort/éclairage) et affiche l’état.</li>
-                <li><b>Normal / défaut :</b> Informations erronées ou absentes.</li>
-              </ul>
+                <h3>3.3 J527 – Électronique de colonne</h3>
+                <ul>
+                  <li><b>Rôle :</b> Transmission des commandes conducteur (comodo/colonne) vers le réseau.</li>
+                  <li><b>Réseau :</b> CAN Confort.</li>
+                  <li><b>Interactions :</b> Communication avec les modules concernés (éclairage, combiné, confort).</li>
+                </ul>
 
-              <h3>3.5 J393</h3>
-              <ul>
-                <li><b>Rôle :</b> Gestion centralisée des fonctions de confort (verrouillage, alarme).</li>
-                <li><b>Réseau :</b> CAN Confort.</li>
-                <li><b>Interactions :</b> Modules confort, J519, combiné.</li>
-                <li><b>Normal / défaut :</b> Verrouillage/alarme peuvent dysfonctionner.</li>
-              </ul>
+                <h3>3.4 J285 – Combiné d’instruments</h3>
+                <ul>
+                  <li><b>Rôle :</b> Affichage des informations conducteur et états remontés par le réseau.</li>
+                  <li><b>Réseau :</b> Réception d’informations via CAN.</li>
+                  <li><b>Interactions :</b> Affichage d’états provenant des ECU habitacle.</li>
+                </ul>
 
-              <br><hr color="#c7d2fe"><br>
-            </font>
+                <h3>3.5 J471 (selon banc) – Module associé</h3>
+                <ul>
+                  <li><b>Rôle :</b> Module présent selon configuration du banc (gestion/distribution associée à certaines fonctions).</li>
+                  <li><b>Réseau :</b> CAN Confort.</li>
+                  <li><b>Interactions :</b> Modules de confort et d’éclairage selon configuration.</li>
+                </ul>
 
-            <!-- ===================================================== -->
-            <!-- 4. Diagnostic / Expérimentations / Procédure           -->
-            <!-- ===================================================== -->
-            <a id="sec4"></a>
-            <font face="Arial">
-              <h2><font color="#1e3a8a">4. Diagnostic, expérimentations et procédure</font></h2>
+                <h3>3.6 J453 – Calculateur du volant multifonction (extrait)</h3>
+                <p>
+                  Le calculateur de volant multifonction (J453) est représenté sur la topologie comme un abonné du réseau habitacle.
+                </p>
 
-              <h3>4.1 Diagnostic automatique</h3>
-              <p>
-                Le diagnostic automatique du banc est réalisé à l’aide du logiciel VCDS connecté via l’interface OBD CAN + USB.
-                Un scan complet du réseau est effectué afin d’identifier tous les calculateurs présents sur le bus CAN.
-              </p>
-              <ol>
-                <li><b>Scan réseau</b> : identification des ECU actifs.</li>
-                <li><b>Lecture des défauts (DTC)</b> : lecture des codes défauts enregistrés.</li>
-                <li><b>Analyse</b> : interprétation technique des défauts détectés.</li>
-              </ol>
+                <table width="100%" cellpadding="8" cellspacing="0" border="0">
+                  <tr>
+                    <td align="center">
+                      <img src="figures/j453_volant_multifonction.png" width="650" border="1" alt="Topologie incluant J453 calculateur volant multifonction">
+                      <br>
+                      <i>Figure 4 — Extrait de topologie montrant le calculateur de volant multifonction J453.</i>
+                    </td>
+                  </tr>
+                </table>
 
-              <h3>4.2 Étude fonctionnelle du système d’éclairage</h3>
-              <p>
-                L’analyse des trames CAN est réalisée à l’aide du CAN-Databus-Multi-Adapter.
-                Les identifiants et données sont observés en fonctionnement normal puis en situation de défaut.
-              </p>
+                <br><hr color="#c7d2fe"><br>
+              </font>
 
-              <h3>4.3 Procédure d’exploitation du banc</h3>
-              <ol>
-                <li><b>Mise sous tension</b> : alimentation activée (12 V), initialisation des calculateurs.</li>
-                <li><b>Initialisation réseau</b> : émission de trames, réseau CAN actif.</li>
-                <li><b>Connexion diagnostic</b> : VCDS, scan automatique.</li>
-                <li><b>Tests</b> : activation fonctions, observation trames, simulation défauts.</li>
-                <li><b>Arrêt</b> : coupure alimentation, fin communication CAN.</li>
-              </ol>
+              <a id="sec4"></a>
+              <font face="Arial">
+                <h2><font color="#1e3a8a">4. Observations et procédure</font></h2>
 
-              <br><hr color="#1e3a8a"><br>
-            </font>
+                <h3>4.1 Observations réalisées</h3>
+                <p>
+                  Les observations ont été menées en activant des fonctions (notamment éclairage) et en visualisant simultanément :
+                  (i) l’effet visuel sur le banc et (ii) l’évolution des trames CAN (identifiants et données) dans PCAN-View.
+                </p>
 
-            <!-- Sources -->
-            <a id="sources"></a>
-            <font face="Arial">
-              <h2><font color="#1e3a8a">Sources</font></h2>
-              <ol>
-                <li><b>[S1]</b> Documentation “Audi CAN Data Bus / architecture réseaux (CAN/LIN/MOST…)”.</li>
-                <li><b>[S2]</b> Documentation Leybold / TP Audi A4 2007 (CAN 100 kbit/s, éléments du banc, défauts simulables).</li>
-              </ol>
-            </font>
+                <table width="100%" cellpadding="8" cellspacing="0" border="0">
+                  <tr>
+                    <td align="center">
+                      <img src="figures/pcan.png" width="880" border="1" alt="Exemple de trames CAN observées dans PCAN-View">
+                      <br>
+                      <i>Figure 5 — Exemple de trames CAN observées (CAN-ID, DLC, Data, cycle time).</i>
+                    </td>
+                  </tr>
+                </table>
 
-          </td>
-        </tr>
-      </table>
+                <h3>4.2 Synthèse des essais (tableau)</h3>
+                <p>
+                  Le tableau ci-dessous présente une synthèse des essais (fonction activée, conditions d’essai, observations visuelles et observations CAN).
+                </p>
 
-      <br>
+                <table width="100%" cellpadding="8" cellspacing="0" border="0">
+                  <tr>
+                    <td align="center">
+                      <img src="figures/tableau.png" width="880" border="1" alt="Tableau de synthèse des essais">
+                      <br>
+                      <i>Figure 6 — Tableau de synthèse des essais réalisés.</i>
+                    </td>
+                  </tr>
+                </table>
 
-      <!-- Petit pied de page -->
-      <table width="100%" cellpadding="10" cellspacing="0" border="0" bgcolor="#0f172a">
-        <tr>
-          <td align="center">
-            <font color="#ffffff" face="Arial"><small>doc_bus_can — version de travail</small></font>
-          </td>
-        </tr>
-      </table>
+                <h3>4.3 Procédure d’exploitation (résumé)</h3>
+                <ol>
+                  <li>Mise sous tension du banc (12/14 V) et vérification du fonctionnement global.</li>
+                  <li>Connexion OBD et lancement de VCDS (identification des calculateurs disponibles).</li>
+                  <li>Connexion interface PEAK et lancement de PCAN-View (réception des trames).</li>
+                  <li>Activation d’une fonction (ex. éclairage) et capture des trames CAN associées.</li>
+                  <li>Enregistrement des captures (PCAN-View) et synthèse des observations.</li>
+                  <li>Arrêt des acquisitions, fermeture des logiciels, puis mise hors tension du banc.</li>
+                </ol>
 
-      <br>
+                <br><hr color="#1e3a8a"><br>
+              </font>
 
-    </td>
-  </tr>
-</table>
+              <a id="sources"></a>
+              <font face="Arial">
+                <h2><font color="#1e3a8a">Sources</font></h2>
+                <ol>
+                  <li><b>[S1]</b> SSP / documentation Audi : architecture réseaux (CAN/LIN/MOST) et topologies.</li>
+                  <li><b>[S2]</b> Documentation Leybold / TP Audi : description du banc, alimentation et éléments étudiés.</li>
+                </ol>
+              </font>
+
+            </td>
+          </tr>
+        </table>
+
+        <!-- Pied -->
+        <table width="100%" cellpadding="10" cellspacing="0" border="0" bgcolor="#0f172a">
+          <tr>
+            <td align="center">
+              <font face="Arial" color="#ffffff">
+                
+              </font>
+            </td>
+          </tr>
+        </table>
+
+      </td>
+    </tr>
+  </table>
 
 </body>
 </html>
