@@ -1,0 +1,28 @@
+COMPTE RENDU — TP Banc d’essai BUS CAN / LIN (Audi – Leybold)
+Filière : M2 SIAA FA									Année : 2025 / 2026
+Groupe : CHELLAL Aya — SAIDI Katia — RAHAOUI Roumaysae
+1. Objectif du travail
+Ce TP vise à analyser le fonctionnement d’un banc d’essai reproduisant une partie du réseau habitacle d’un véhicule Audi.
+L’objectif est de comprendre l’architecture de communication des calculateurs. 
+Le travail consiste à identifier l’architecture du réseau, analyser les échanges de trames CAN et étudier l’impact des différentes fonctions d’éclairage.
+2. Matériel et outils utilisés
+Le TP s’appuie sur le banc pédagogique Leybold Training Panel Lighting, qui reproduit une architecture simplifiée du réseau habitacle 
+d’un véhicule Audi et permet de simuler différentes fonctions d’éclairage. Les principaux outils utilisés sont :
+* VCDS (Ross-Tech) : diagnostic automobile, auto-scan du réseau, identification des calculateurs.
+* Interface PEAK PCAN-USB et logiciel PCAN-View : observation des trames CAN (identifiant, données, DLC et temps de cycle).
+3. Méthodologie expérimentale
+Le banc a d’abord été mis sous tension afin de vérifier le fonctionnement nominal du système. Un auto-scan VCDS a ensuite permis 
+d’identifier les calculateurs présents sur le réseau. L’outil PCAN-View était utilisé pour observer les trames CAN échangées entre 
+les calculateurs et identifier les messages actifs en fonctionnement normal. Différentes fonctions d’éclairage 
+(clignotants, antibrouillard, phares, feux stop) ont ensuite été activées afin d’observer les variations des trames. 
+4. Résultats et analyse
+Les essais ont montré que l’activation des fonctions d’éclairage entraîne des variations observables dans les trames CAN, notamment 
+par modification des données ou apparition de certains identifiants. La comparaison entre les états permet ainsi d’établir le lien entre 
+une fonction physique du véhicule et sa signature de communication sur le bus CAN.
+5. Organisation du travail collaboratif
+Le travail a été réalisé de manière collaborative afin de produire une documentation technique complète du banc et des expérimentations.
+Aya a contribué principalement à l’analyse de l’architecture réseau et des principes de communication CAN, ainsi qu’à la structuration du 
+document et à l’intégration des schémas.
+Katia a réalisé la documentation des outils et des calculateurs du système, en décrivant leur rôle et leurs interactions dans le réseau.
+Roumaysae s’est concentrée sur la réalisation des expérimentations et l’analyse des trames CAN, ainsi que sur la validation du comportement 
+du système lors des différents essais.
